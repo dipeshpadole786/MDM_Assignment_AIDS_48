@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fb;
+            color: #1a2c3e;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: white;
+            padding: 2rem 1.5rem;
+            border-right: 1px solid #e9edf2;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f5e7e;
+            margin-bottom: 2rem;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            color: #4a627a;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover {
+            background: #f0f4f9;
+            color: #1f5e7e;
+        }
+
+        .nav-item.active {
+            background: #e8f0f5;
+            color: #1f5e7e;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem 2.5rem;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1f3b4c;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Hero Card */
+        .hero-card {
+            background: linear-gradient(135deg, #1a4b66 0%, #0f3a4f 100%);
+            border-radius: 28px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .hero-content h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-content p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.5;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f5e7e;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-outline-light {
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,0.5);
+            padding: 0.7rem 1.8rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-outline-light:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1rem 1.8rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f6;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f5e7e;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #6b7f92;
+            margin-top: 0.25rem;
+        }
+
+        /* Two Column Grid */
+        .dashboard-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .analysis-card {
+            flex: 2;
+            min-width: 280px;
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f6;
+        }
+
+        .right-sidebar {
+            flex: 1;
+            min-width: 260px;
+        }
+
+        /* Analysis Card Styles */
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1f3b4c;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eef2f6;
+        }
+
+        .score-grid {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .score-box {
+            background: #f8fafd;
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7f92;
+            font-weight: 600;
+        }
+
+        .score-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1f5e7e;
+            line-height: 1.2;
+        }
+
+        .info-block {
+            margin-bottom: 1.8rem;
+        }
+
+        .info-block h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c4e6e;
+            margin-bottom: 0.75rem;
+        }
+
+        .keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+        }
+
+        .keyword-badge {
+            background: #fff0e8;
+            color: #c45c2c;
+            padding: 0.35rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .ai-suggestion {
+            background: #f0f6fb;
+            padding: 1rem 1.2rem;
+            border-radius: 18px;
+            color: #1e5a7a;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            margin-bottom: 1.8rem;
+            border-left: 3px solid #1f5e7e;
+        }
+
+        .btn-full {
+            width: 100%;
+            background: white;
+            border: 1.5px solid #1f5e7e;
+            color: #1f5e7e;
+            padding: 0.8rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .btn-full:hover {
+            background: #e8f0f5;
+            border-color: #0f4a64;
+        }
+
+        /* Upcoming Card */
+        .upcoming-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem;
+            border: 1px solid #eef2f6;
+        }
+
+        .upcoming-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1f3b4c;
+            margin-bottom: 1.2rem;
+        }
+
+        .learning-item {
+            background: #fafcfd;
+            padding: 0.9rem 1rem;
+            border-radius: 16px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2b5f7a;
+            border: 1px solid #eef2f8;
+        }
+
+        .learning-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Toast */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f3b4c;
+            color: white;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 220px;
+            }
+            .main-content {
+                margin-left: 220px;
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e9edf2;
+                padding: 1rem;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            .hero-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            .hero-content p {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">Resume Analyzer</div>
+            <div class="nav-menu">
+                <div class="nav-item active">Home</div>
+                <div class="nav-item">Resume Analyzer</div>
+                <div class="nav-item">Job Matching</div>
+                <div class="nav-item">ATS Checker</div>
+                <div class="nav-item">Mock Test</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="page-header">
+                <h1>AI-Powered Resume Analysis</h1>
+            </div>
+
+            <!-- Hero Section with Resume and Buttons -->
+            <div class="hero-card">
+                <div class="hero-content">
+                    <h2>Resume</h2>
+                    <p>Get instant ATS scores, keyword suggestions, and job matching insights. Optimize your resume with intelligent AI analysis and land your dream job faster.</p>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn-white" id="analyzeBtn">Analyze Resume</button>
+                    <button class="btn-outline-light" id="jobMatchBtn">Job Matching</button>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">ATS Pass Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Resumes Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4.9/5</div>
+                    <div class="stat-label">User Rating</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Left: Analysis Card -->
+                <div class="analysis-card">
+                    <div class="section-title">Analysis</div>
+                    
+                    <div class="score-grid">
+                        <div class="score-box">
+                            <div class="score-label">ATS Score</div>
+                            <div class="score-value" id="atsScore">67/100</div>
+                        </div>
+                        <div class="score-box">
+                            <div class="score-label">Skill Match</div>
+                            <div class="score-value" id="skillMatch">58%</div>
+                        </div>
+                    </div>
+
+                    <div class="info-block">
+                        <h4>Missing Keywords</h4>
+                        <div class="keyword-list" id="missingKeywords">
+                            <span class="keyword-badge">Python</span>
+                            <span class="keyword-badge">Machine Learning</span>
+                            <span class="keyword-badge">SQL</span>
+                        </div>
+                    </div>
+
+                    <div class="info-block">
+                        <h4>AI Suggestion</h4>
+                        <div class="ai-suggestion" id="aiSuggestion">
+                            Add quantifiable metrics and highlight technical skills to improve ATS score.
+                        </div>
+                    </div>
+
+                    <button class="btn-full" id="fullAnalysisBtn">Get Full Analysis →</button>
+                </div>
+
+                <!-- Right: Upcoming Learning -->
+                <div class="right-sidebar">
+                    <div class="upcoming-card">
+                        <div class="upcoming-title">Upcoming Learning</div>
+                        <div class="learning-item">
+                            <span class="learning-icon">📘</span>
+                            <span>Advanced ATS Optimization</span>
+                        </div>
+                        <div class="learning-item">
+                            <span class="learning-icon">🎯</span>
+                            <span>Keyword Targeting for Tech Roles</span>
+                        </div>
+                        <div class="learning-item">
+                            <span class="learning-icon">📈</span>
+                            <span>Resume Storytelling Workshop</span>
+                        </div>
+                        <div class="learning-item">
+                            <span class="learning-icon">💡</span>
+                            <span>AI Interview Prep Session</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message"></div>
+
+    <script>
+        // DOM Elements
+        const atsScoreEl = document.getElementById('atsScore');
+        const skillMatchEl = document.getElementById('skillMatch');
+        const missingKeywordsEl = document.getElementById('missingKeywords');
+        const aiSuggestionEl = document.getElementById('aiSuggestion');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const jobMatchBtn = document.getElementById('jobMatchBtn');
+        const fullAnalysisBtn = document.getElementById('fullAnalysisBtn');
+        const toast = document.getElementById('toast');
+
+        const pageRoutes = {
+            "Home": "index.html",
+            "Resume Analyzer": "Resume_upload.html",
+            "Job Matching": "result.html",
+            "ATS Checker": "Resume_upload.html",
+            "Mock Test": "resume_analyzer.html"
+        };
+
+        function currentFileName() {
+            const path = window.location.pathname || "";
+            const last = path.split("/").pop();
+            return (last || "index.html").toLowerCase();
+        }
+
+        function isCurrentPage(targetFile) {
+            return currentFileName() === String(targetFile || "").toLowerCase();
+        }
+
+        function navigateTo(pageName) {
+            const target = pageRoutes[pageName];
+            if (!target) return false;
+            if (isCurrentPage(target)) return true;
+            window.location.href = target;
+            return true;
+        }
+
+        // Current State - matches image: ATS Score 67/100
+        let currentState = {
+            ats: 67,
+            skill: 58,
+            missing: ["Python", "Machine Learning", "SQL"],
+            suggestion: "Add quantifiable metrics and highlight technical skills to improve ATS score."
+        };
+
+        function showToast(message, duration = 2000) {
+            toast.style.opacity = '1';
+            toast.innerText = message;
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, duration);
+        }
+
+        function updateUI() {
+            atsScoreEl.innerText = `${currentState.ats}/100`;
+            skillMatchEl.innerText = `${currentState.skill}%`;
+            
+            missingKeywordsEl.innerHTML = '';
+            currentState.missing.forEach(keyword => {
+                const badge = document.createElement('span');
+                badge.className = 'keyword-badge';
+                badge.innerText = keyword;
+                missingKeywordsEl.appendChild(badge);
+            });
+            
+            aiSuggestionEl.innerText = currentState.suggestion;
+        }
+
+        // Analyze Resume - updates with new analysis
+        function handleAnalyze() {
+            const newAts = Math.floor(Math.random() * (85 - 62 + 1) + 62);
+            const newSkill = Math.floor(Math.random() * (80 - 55 + 1) + 55);
+            
+            const missingPools = [
+                ["Python", "Machine Learning", "SQL"],
+                ["React", "Node.js", "MongoDB"],
+                ["Leadership", "Agile", "Scrum"],
+                ["Cloud", "AWS", "Docker"],
+                ["Data Analysis", "Tableau", "Excel"]
+            ];
+            const suggestionPool = [
+                "Add quantifiable metrics and highlight technical skills to improve ATS score.",
+                "Include more industry-specific keywords and showcase project outcomes.",
+                "Tailor your resume summary to match job descriptions for better matching.",
+                "Add certifications and measurable achievements to boost credibility.",
+                "Optimize formatting for ATS compatibility and use standard section headers."
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * missingPools.length);
+            const randomSuggestion = suggestionPool[Math.floor(Math.random() * suggestionPool.length)];
+            
+            currentState.ats = newAts;
+            currentState.skill = newSkill;
+            currentState.missing = [...missingPools[randomIndex]];
+            currentState.suggestion = randomSuggestion;
+            
+            updateUI();
+            showToast("✅ Resume analyzed! New insights available.");
+        }
+
+        // Job Matching - simulates job matching optimization
+        function handleJobMatching() {
+            const matchedSkill = Math.min(94, currentState.skill + Math.floor(Math.random() * 15) + 5);
+            const jobKeywords = ["Python", "SQL", "Data Visualization", "Project Management", "Communication", "Leadership"];
+            const shuffled = [...jobKeywords].sort(() => 0.5 - Math.random());
+            const newMissing = shuffled.slice(0, 3);
+            const matchSuggestion = "Based on job market trends, highlight these keywords and add measurable results to increase match rate.";
+            
+            currentState.ats = Math.min(92, currentState.ats + Math.floor(Math.random() * 8) + 2);
+            currentState.skill = matchedSkill;
+            currentState.missing = newMissing;
+            currentState.suggestion = matchSuggestion;
+            
+            updateUI();
+            showToast("🎯 Job matching optimized! Keywords updated for target roles.");
+        }
+
+        // Full Analysis - shows detailed report
+        function handleFullAnalysis() {
+            showToast(`📊 Full Analysis: ATS Score ${currentState.ats}/100 | Skill Match ${currentState.skill}% | Missing: ${currentState.missing.join(', ')} | ${currentState.suggestion}`);
+        }
+
+        // Navigation items - simple interactive feedback
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                const pageName = this.innerText;
+                if (navigateTo(pageName)) return;
+                if (pageName === 'Home') {
+                    showToast("🏠 Welcome to Resume Analyzer Home");
+                } else if (pageName === 'Resume Analyzer') {
+                    showToast("📄 Upload your resume to get instant analysis");
+                } else if (pageName === 'Job Matching') {
+                    showToast("🔍 Find the best job matches based on your skills");
+                } else if (pageName === 'ATS Checker') {
+                    showToast("🤖 Check your resume against ATS filters");
+                } else if (pageName === 'Mock Test') {
+                    showToast("📝 Practice with AI-powered mock interviews");
+                }
+            });
+        });
+
+        // Event Listeners
+        analyzeBtn.addEventListener('click', () => navigateTo('Resume Analyzer'));
+        jobMatchBtn.addEventListener('click', () => navigateTo('Job Matching'));
+        fullAnalysisBtn.addEventListener('click', () => navigateTo('Mock Test'));
+
+        // Initial UI setup
+        updateUI();
+    </script>
+</body>
+</html>

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer - Interview Performance Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fb;
+            color: #1a2c3e;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 2rem 1.5rem;
+            border-right: 1px solid #e9edf2;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f5e7e;
+            margin-bottom: 2rem;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            color: #4a627a;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover {
+            background: #f0f4f9;
+            color: #1f5e7e;
+        }
+
+        .nav-item.active {
+            background: #e8f0f5;
+            color: #1f5e7e;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem 2.5rem;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1f3b4c;
+        }
+
+        .save-btn {
+            background: white;
+            border: 1.5px solid #1f5e7e;
+            color: #1f5e7e;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .save-btn:hover {
+            background: #e8f0f5;
+            transform: translateY(-1px);
+        }
+
+        /* Role Card */
+        .role-card {
+            background: white;
+            border-radius: 20px;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #eef2f6;
+            display: inline-block;
+        }
+
+        .role-card span {
+            color: #6b7f92;
+            font-size: 0.9rem;
+        }
+
+        .role-card strong {
+            color: #1f5e7e;
+            font-weight: 600;
+        }
+
+        /* Overall Score Card */
+        .overall-card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            border: 1px solid #eef2f6;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .score-circle-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1rem;
+        }
+
+        .score-circle {
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .circle-bg {
+            stroke: #eef2f6;
+            stroke-width: 12;
+            fill: none;
+        }
+
+        .circle-progress {
+            stroke: #1f5e7e;
+            stroke-width: 12;
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.8s ease;
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #1f5e7e;
+        }
+
+        .score-total {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #9aaebf;
+        }
+
+        .grade {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #f5b042;
+            margin-top: 0.25rem;
+        }
+
+        .performance-message {
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: #4a627a;
+        }
+
+        .performance-message strong {
+            color: #2c8ebb;
+        }
+
+        /* Category Grid */
+        .category-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-card {
+            flex: 1;
+            min-width: 180px;
+            background: #f8fafd;
+            border-radius: 24px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid #eef2f6;
+        }
+
+        .category-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #5b6f82;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .category-score {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f5e7e;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-bar {
+            background: #e9edf2;
+            border-radius: 20px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .category-fill {
+            background: #1f5e7e;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+        }
+
+        /* Skills Assessment Section */
+        .skills-section {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem;
+            border: 1px solid #eef2f6;
+        }
+
+        .skills-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1f3b4c;
+            margin-bottom: 1.5rem;
+        }
+
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .skill-chart {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .skill-name {
+            font-weight: 600;
+            color: #2c4e6e;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .radial-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+        }
+
+        .radial-svg {
+            transform: rotate(-90deg);
+        }
+
+        .radial-bg {
+            stroke: #eef2f6;
+            stroke-width: 10;
+            fill: none;
+        }
+
+        .radial-progress {
+            stroke: #1f5e7e;
+            stroke-width: 10;
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s ease;
+        }
+
+        .radial-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f5e7e;
+        }
+
+        .skill-value {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #6b7f92;
+        }
+
+        /* Toast */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f3b4c;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                margin-left: 240px;
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e9edf2;
+                padding: 1rem;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+
+            .skills-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">Resume Analyzer</div>
+            <div class="nav-menu">
+                <div class="nav-item">Home</div>
+                <div class="nav-item">Resume Analyzer</div>
+                <div class="nav-item">Job Matching</div>
+                <div class="nav-item">ATS Checker</div>
+                <div class="nav-item active">Mock Test</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="page-header">
+                <h1>Interview Performance Report</h1>
+                <button class="save-btn" id="saveReportBtn">💾 Save Report</button>
+            </div>
+
+            <!-- Role Card -->
+            <div class="role-card">
+                <span>Role: <strong>Fullstack Developer</strong> · 6 Questions</span>
+            </div>
+
+            <!-- Overall Performance -->
+            <div class="overall-card">
+                <div class="score-circle-container">
+                    <div class="score-circle">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="88" class="circle-bg" stroke="currentColor" stroke-width="12"
+                                fill="none" style="stroke: #eef2f6;"></circle>
+                            <circle cx="100" cy="100" r="88" class="circle-progress" stroke="currentColor"
+                                stroke-width="12" fill="none" stroke-linecap="round"
+                                style="stroke: #1f5e7e; stroke-dasharray: 553; stroke-dashoffset: 83;"></circle>
+                        </svg>
+                    </div>
+                    <div class="score-text">
+                        <div class="score-number">85</div>
+                        <div class="score-total">/100</div>
+                        <div class="grade">A</div>
+                    </div>
+                </div>
+                <div class="performance-message">
+                    <strong>Outstanding performance!</strong> You're well-prepared for this role.
+                </div>
+            </div>
+
+            <!-- Category Performance Grid -->
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="category-name">Communication</div>
+                    <div class="category-score">90%</div>
+                    <div class="category-bar">
+                        <div class="category-fill" style="width: 90%;"></div>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Technical</div>
+                    <div class="category-score">88%</div>
+                    <div class="category-bar">
+                        <div class="category-fill" style="width: 88%;"></div>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Problem Solving</div>
+                    <div class="category-score">82%</div>
+                    <div class="category-bar">
+                        <div class="category-fill" style="width: 82%;"></div>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Leadership</div>
+                    <div class="category-score">80%</div>
+                    <div class="category-bar">
+                        <div class="category-fill" style="width: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills Assessment Section -->
+            <div class="skills-section">
+                <div class="skills-title">Skills Assessment</div>
+                <div class="skills-grid">
+                    <!-- Technical Skill -->
+                    <div class="skill-chart">
+                        <div class="skill-name">Technical</div>
+                        <div class="radial-container">
+                            <svg class="radial-svg" width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" class="radial-bg" stroke="currentColor" stroke-width="8"
+                                    fill="none" style="stroke: #eef2f6;"></circle>
+                                <circle cx="60" cy="60" r="52" class="radial-progress technical-progress"
+                                    stroke="currentColor" stroke-width="8" fill="none" stroke-linecap="round"
+                                    style="stroke: #1f5e7e; stroke-dasharray: 327; stroke-dashoffset: 39;"></circle>
+                            </svg>
+                            <div class="radial-text">88</div>
+                        </div>
+                        <div class="skill-value">out of 100</div>
+                    </div>
+
+                    <!-- Leadership Skill -->
+                    <div class="skill-chart">
+                        <div class="skill-name">Leadership</div>
+                        <div class="radial-container">
+                            <svg class="radial-svg" width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" class="radial-bg" stroke="currentColor" stroke-width="8"
+                                    fill="none" style="stroke: #eef2f6;"></circle>
+                                <circle cx="60" cy="60" r="52" class="radial-progress leadership-progress"
+                                    stroke="currentColor" stroke-width="8" fill="none" stroke-linecap="round"
+                                    style="stroke: #1f5e7e; stroke-dasharray: 327; stroke-dashoffset: 65;"></circle>
+                            </svg>
+                            <div class="radial-text">80</div>
+                        </div>
+                        <div class="skill-value">out of 100</div>
+                    </div>
+
+                    <!-- Problem Solving Skill -->
+                    <div class="skill-chart">
+                        <div class="skill-name">Problem Solving</div>
+                        <div class="radial-container">
+                            <svg class="radial-svg" width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" class="radial-bg" stroke="currentColor" stroke-width="8"
+                                    fill="none" style="stroke: #eef2f6;"></circle>
+                                <circle cx="60" cy="60" r="52" class="radial-progress problemsolving-progress"
+                                    stroke="currentColor" stroke-width="8" fill="none" stroke-linecap="round"
+                                    style="stroke: #1f5e7e; stroke-dasharray: 327; stroke-dashoffset: 59;"></circle>
+                            </svg>
+                            <div class="radial-text">82</div>
+                        </div>
+                        <div class="skill-value">out of 100</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message"></div>
+
+    <script>
+        const toast = document.getElementById('toast');
+        const saveBtn = document.getElementById('saveReportBtn');
+
+        const pageRoutes = {
+            "Home": "index.html",
+            "Resume Analyzer": "Resume_upload.html",
+            "Job Matching": "result.html",
+            "ATS Checker": "Resume_upload.html",
+            "Mock Test": "resume_analyzer.html"
+        };
+
+        function currentFileName() {
+            const path = window.location.pathname || "";
+            const last = path.split("/").pop();
+            return (last || "index.html").toLowerCase();
+        }
+
+        function isCurrentPage(targetFile) {
+            return currentFileName() === String(targetFile || "").toLowerCase();
+        }
+
+        function navigateTo(pageName) {
+            const target = pageRoutes[pageName];
+            if (!target) return false;
+            if (isCurrentPage(target)) return true;
+            window.location.href = target;
+            return true;
+        }
+
+        function showToast(message, duration = 2500) {
+            toast.style.opacity = '1';
+            toast.innerText = message;
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, duration);
+        }
+
+        // Save Report functionality
+        saveBtn.addEventListener('click', function () {
+            showToast('📄 Report saved successfully! You can download it from your dashboard.', 3000);
+        });
+
+        // Navigation items
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function () {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                const pageName = this.innerText;
+                if (navigateTo(pageName)) return;
+
+                if (pageName === 'Home') {
+                    showToast('🏠 Welcome to Resume Analyzer Home');
+                } else if (pageName === 'Resume Analyzer') {
+                    showToast('📄 Upload your resume to get instant AI analysis');
+                } else if (pageName === 'Job Matching') {
+                    showToast('🔍 Find the best job matches based on your skills');
+                } else if (pageName === 'ATS Checker') {
+                    showToast('🤖 Check your resume against ATS filters');
+                } else if (pageName === 'Mock Test') {
+                    showToast('📝 Viewing your interview performance report');
+                }
+            });
+        });
+
+        // Animate radial progress bars on load
+        setTimeout(() => {
+            // Technical: 88% -> circumference 327, offset = 327 * (1 - 0.88) = 39.24
+            const technicalProgress = document.querySelector('.technical-progress');
+            if (technicalProgress) {
+                const circumference = 2 * Math.PI * 52;
+                const offset = circumference * (1 - 0.88);
+                technicalProgress.style.strokeDasharray = circumference;
+                technicalProgress.style.strokeDashoffset = circumference;
+                setTimeout(() => {
+                    technicalProgress.style.strokeDashoffset = offset;
+                }, 100);
+            }
+
+            // Leadership: 80%
+            const leadershipProgress = document.querySelector('.leadership-progress');
+            if (leadershipProgress) {
+                const circumference = 2 * Math.PI * 52;
+                const offset = circumference * (1 - 0.80);
+                leadershipProgress.style.strokeDasharray = circumference;
+                leadershipProgress.style.strokeDashoffset = circumference;
+                setTimeout(() => {
+                    leadershipProgress.style.strokeDashoffset = offset;
+                }, 100);
+            }
+
+            // Problem Solving: 82%
+            const problemProgress = document.querySelector('.problemsolving-progress');
+            if (problemProgress) {
+                const circumference = 2 * Math.PI * 52;
+                const offset = circumference * (1 - 0.82);
+                problemProgress.style.strokeDasharray = circumference;
+                problemProgress.style.strokeDashoffset = circumference;
+                setTimeout(() => {
+                    problemProgress.style.strokeDashoffset = offset;
+                }, 100);
+            }
+
+            // Animate category bars
+            const categoryFills = document.querySelectorAll('.category-fill');
+            categoryFills.forEach(fill => {
+                const width = fill.style.width;
+                fill.style.width = '0%';
+                setTimeout(() => {
+                    fill.style.width = width;
+                }, 150);
+            });
+        }, 200);
+    </script>
+</body>
+
+</html>

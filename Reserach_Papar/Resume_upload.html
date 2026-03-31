@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer - Upload</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fb;
+            color: #1a2c3e;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 2rem 1.5rem;
+            border-right: 1px solid #e9edf2;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f5e7e;
+            margin-bottom: 2rem;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            color: #4a627a;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover {
+            background: #f0f4f9;
+            color: #1f5e7e;
+        }
+
+        .nav-item.active {
+            background: #e8f0f5;
+            color: #1f5e7e;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem 2.5rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f3b4c;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Upload Section */
+        .upload-container {
+            max-width: 900px;
+        }
+
+        .description-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #eef2f6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .description-card p {
+            color: #4a627a;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            background: white;
+            border-radius: 28px;
+            padding: 2.5rem;
+            border: 1px solid #eef2f6;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1f3b4c;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtitle {
+            color: #6b7f92;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input-wrapper {
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            background: #1f5e7e;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .file-input-label:hover {
+            background: #0f4a64;
+            transform: translateY(-1px);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: #1f5e7e;
+            font-weight: 500;
+        }
+
+        /* Upload Info */
+        .upload-info {
+            background: #f8fafd;
+            border-radius: 20px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: #5b6f82;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-icon {
+            font-size: 1rem;
+        }
+
+        /* Quick Links Section */
+        .quick-links {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid #eef2f6;
+        }
+
+        .quick-links-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f3b4c;
+            margin-bottom: 1rem;
+        }
+
+        .links-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .quick-link-item {
+            background: #f8fafd;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1f5e7e;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #eef2f6;
+        }
+
+        .quick-link-item:hover {
+            background: #e8f0f5;
+            transform: translateY(-1px);
+        }
+
+        /* Toast Message */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f3b4c;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                margin-left: 240px;
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e9edf2;
+                padding: 1rem;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+
+            .upload-area {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">Resume Analyzer</div>
+            <div class="nav-menu">
+                <div class="nav-item">Home</div>
+                <div class="nav-item active">Resume Analyzer</div>
+                <div class="nav-item">Job Matching</div>
+                <div class="nav-item">ATS Checker</div>
+                <div class="nav-item">Mock Test</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="page-header">
+                <h1>Resume Analyzer</h1>
+            </div>
+
+            <div class="upload-container">
+              
+
+                <!-- Upload Area -->
+                <div class="upload-area">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-title">Upload your resume</div>
+                    <div class="upload-subtitle">Drag and drop your PDF or DOCX file here, or click to browse</div>
+
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label" for="resumeFile">
+                            Choose File
+                        </label>
+                        <input type="file" id="resumeFile" accept=".pdf,.docx">
+                        <div id="fileName" class="file-name"></div>
+                    </div>
+
+                    <div class="upload-info">
+                        <div class="info-item">
+                            <span class="info-icon">📎</span>
+                            <span>Supported formats: PDF, DOCX</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">📏</span>
+                            <span>Maximum file size: 5MB</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🔒</span>
+                            <span>Your file is processed locally and securely</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links Section -->
+                <div class="quick-links">
+                    <div class="quick-links-title">Quick Links</div>
+                    <div class="links-grid">
+                        <div class="quick-link-item">📊 ATS Score Guide</div>
+                        <div class="quick-link-item">🔑 Keyword Optimization</div>
+                        <div class="quick-link-item">📝 Resume Templates</div>
+                        <div class="quick-link-item">🎯 Job Match Tips</div>
+                        <div class="quick-link-item">💡 Interview Prep</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message"></div>
+
+    <script>
+        const fileInput = document.getElementById('resumeFile');
+        const fileNameDisplay = document.getElementById('fileName');
+        const toast = document.getElementById('toast');
+
+        const pageRoutes = {
+            "Home": "index.html",
+            "Resume Analyzer": "Resume_upload.html",
+            "Job Matching": "result.html",
+            "ATS Checker": "Resume_upload.html",
+            "Mock Test": "resume_analyzer.html"
+        };
+
+        function currentFileName() {
+            const path = window.location.pathname || "";
+            const last = path.split("/").pop();
+            return (last || "index.html").toLowerCase();
+        }
+
+        function isCurrentPage(targetFile) {
+            return currentFileName() === String(targetFile || "").toLowerCase();
+        }
+
+        function navigateTo(pageName) {
+            const target = pageRoutes[pageName];
+            if (!target) return false;
+            if (isCurrentPage(target)) return true;
+            window.location.href = target;
+            return true;
+        }
+
+        function showToast(message, duration = 2500) {
+            toast.style.opacity = '1';
+            toast.innerText = message;
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, duration);
+        }
+
+        // Handle file selection
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+
+            if (!file) {
+                fileNameDisplay.innerText = '';
+                return;
+            }
+
+            // Check file size (max 5MB = 5 * 1024 * 1024 bytes)
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                showToast('❌ File size exceeds 5MB limit. Please choose a smaller file.');
+                fileInput.value = '';
+                fileNameDisplay.innerText = '';
+                return;
+            }
+
+            // Check file extension
+            const allowedExtensions = ['.pdf', '.docx'];
+            const fileName = file.name;
+            const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+            if (!allowedExtensions.includes(fileExtension)) {
+                showToast('❌ Unsupported format. Please upload PDF or DOCX file.');
+                fileInput.value = '';
+                fileNameDisplay.innerText = '';
+                return;
+            }
+
+            // Success
+            fileNameDisplay.innerText = `✓ ${fileName}`;
+            showToast(`✅ Resume "${fileName}" uploaded successfully! Analyzing...`, 2000);
+
+            // Simulate analysis after upload
+            setTimeout(() => {
+                showToast('📊 Analysis complete! Check your ATS score and keyword insights.', 3000);
+                setTimeout(() => navigateTo('Mock Test'), 900);
+            }, 1500);
+        });
+
+        // Navigation items
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function () {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                const pageName = this.innerText;
+                if (navigateTo(pageName)) return;
+
+                if (pageName === 'Home') {
+                    showToast('🏠 Welcome to Resume Analyzer Home');
+                } else if (pageName === 'Resume Analyzer') {
+                    showToast('📄 Upload your resume to get instant AI analysis');
+                } else if (pageName === 'Job Matching') {
+                    showToast('🔍 Find the best job matches based on your skills');
+                } else if (pageName === 'ATS Checker') {
+                    showToast('🤖 Check your resume against ATS filters');
+                } else if (pageName === 'Mock Test') {
+                    showToast('📝 Practice with AI-powered mock interviews');
+                }
+            });
+        });
+
+        // Quick Links functionality
+        const quickLinks = document.querySelectorAll('.quick-link-item');
+        quickLinks.forEach(link => {
+            link.addEventListener('click', function () {
+                const linkText = this.innerText;
+                if (/job match/i.test(linkText)) {
+                    navigateTo('Job Matching');
+                    return;
+                }
+                if (/interview/i.test(linkText)) {
+                    navigateTo('Mock Test');
+                    return;
+                }
+                showToast(`🔗 Opening: ${linkText}`);
+            });
+        });
+
+        // Drag and drop functionality
+        const uploadArea = document.querySelector('.upload-area');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            uploadArea.style.border = '2px dashed #1f5e7e';
+            uploadArea.style.backgroundColor = '#f8fbfe';
+        }
+
+        function unhighlight() {
+            uploadArea.style.border = '1px solid #eef2f6';
+            uploadArea.style.backgroundColor = 'white';
+        }
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                fileInput.files = files;
+                const changeEvent = new Event('change', { bubbles: true });
+                fileInput.dispatchEvent(changeEvent);
+            }
+        }
+    </script>
+</body>
+
+</html>

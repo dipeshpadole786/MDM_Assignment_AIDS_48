@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goibibo - Train Ticket Booking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a2e;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: #0a2b4e;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ff6e4a;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .right-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .right-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        /* Header Section */
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e2a3e;
+            margin-bottom: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #1e6f3f;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Features Row */
+        .features-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 24px;
+            flex: 1;
+            min-width: 180px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e2a3e;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        /* PNR Check Card */
+        .pnr-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 40px;
+            border: 1px solid #eef2f6;
+        }
+
+        .pnr-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e2a3e;
+            margin-bottom: 8px;
+        }
+
+        .pnr-subtitle {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .input-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: #fefefe;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #ff6e4a;
+            box-shadow: 0 0 0 3px rgba(255,110,74,0.1);
+        }
+
+        .check-btn {
+            background: #ff6e4a;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 160px;
+        }
+
+        .check-btn:hover {
+            background: #e55a3a;
+            transform: translateY(-1px);
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, #fff5f0 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid #ffe4d6;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ff6e4a;
+            margin-bottom: 8px;
+        }
+
+        .stat-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid #eef2f6;
+        }
+
+        .benefits-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e2a3e;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .benefits-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .benefit-item {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 20px;
+            background: #fafcff;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .benefit-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .benefit-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e2a3e;
+            margin-bottom: 8px;
+        }
+
+        .benefit-desc {
+            font-size: 13px;
+            color: #6c757d;
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0a2b4e;
+            color: #8a9bb0;
+            padding: 30px 40px;
+            margin-top: 50px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* Toast */
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e2a3e;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 900px) {
+            .top-bar {
+                padding: 12px 20px;
+            }
+            .nav-links {
+                gap: 15px;
+            }
+            .main-container {
+                padding: 20px;
+            }
+            .pnr-card {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .input-group {
+                flex-direction: column;
+            }
+            .check-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div class="top-bar">
+        <div class="logo">goibibo</div>
+        <div class="nav-links">
+            <a href="#">Flights</a>
+            <a href="#">Hotels</a>
+            <a href="#">Trains</a>
+            <a href="#">Cabs</a>
+            <a href="#">Bus</a>
+            <a href="#">Holidays</a>
+            <a href="#">Forex</a>
+            <a href="#">Insurance</a>
+        </div>
+        <div class="right-links">
+            <a href="#">Manage Booking</a>
+            <a href="#">My Trips</a>
+            <a href="#">Login / Signup</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="page-header">
+            <h1>Train Ticket Booking</h1>
+            <span class="badge">IRCTC Authorized Partner</span>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="features-row">
+            <div class="feature-card">
+                <div class="feature-icon">🎫</div>
+                <div class="feature-title">Book Train tickets</div>
+                <div class="feature-desc">Easy booking with best offers</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <div class="feature-title">Check PNR Status</div>
+                <div class="feature-desc">Real-time PNR updates</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚆</div>
+                <div class="feature-title">Live Trains Status</div>
+                <div class="feature-desc">Track trains in real-time</div>
+            </div>
+        </div>
+
+        <!-- PNR Check Card -->
+        <div class="pnr-card">
+            <div class="pnr-title">Enter 10 digit PNR number</div>
+            <div class="pnr-subtitle">Check your ticket status instantly</div>
+            
+            <div class="input-group">
+                <div class="input-field">
+                    <label>PNR NUMBER</label>
+                    <input type="text" id="pnrInput" placeholder="e.g., 1234567890" maxlength="10">
+                </div>
+                <button class="check-btn" id="checkStatusBtn">CHECK STATUS</button>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number">1 million+</div>
+                <div class="stat-text">customers book train tickets with us</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">⭐ 4.8/5</div>
+                <div class="stat-text">Customer Rating</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-text">Customer Support</div>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="benefits-section">
+            <div class="benefits-title">Why book with Goibibo?</div>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon">💰</div>
+                    <div class="benefit-title">No Cancellation Fee</div>
+                    <div class="benefit-desc">You can opt for free cancellation & get full refund</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🔄</div>
+                    <div class="benefit-title">Alternate Trip</div>
+                    <div class="benefit-desc">Get 2x refund if ticket doesn't get confirmed</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">💳</div>
+                    <div class="benefit-title">No PG Fee via UPI</div>
+                    <div class="benefit-desc">Zero Payment Gateway Charges via UPI</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🎯</div>
+                    <div class="benefit-title">Instant Confirmation</div>
+                    <div class="benefit-desc">Get your ticket confirmed instantly</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2024 Goibibo | IRCTC Authorized Partner | All rights reserved</p>
+    </div>
+
+    <div id="toast" class="toast-message"></div>
+
+    <script>
+        const pnrInput = document.getElementById('pnrInput');
+        const checkBtn = document.getElementById('checkStatusBtn');
+        const toast = document.getElementById('toast');
+
+        function showToast(message, duration = 3000) {
+            toast.style.opacity = '1';
+            toast.innerText = message;
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, duration);
+        }
+
+        // PNR Status Check Function
+        function checkPNRStatus() {
+            let pnr = pnrInput.value.trim();
+            
+            if (pnr === '') {
+                showToast('❌ Please enter a 10-digit PNR number');
+                return;
+            }
+            
+            if (!/^\d{10}$/.test(pnr)) {
+                showToast('❌ Invalid PNR number. Please enter a valid 10-digit number.');
+                return;
+            }
+            
+            // Simulate PNR status check
+            const statuses = [
+                { status: 'Confirmed', coach: 'A1', berth: '21', passenger: '3', message: '✅ PNR Status: CONFIRMED | Coach: A1 | Berth: 21 | Passenger: 3' },
+                { status: 'RAC', coach: 'S5', berth: 'RAC 12', passenger: '2', message: '🟡 PNR Status: RAC | Coach: S5 | RAC No: 12 | Waiting confirmation' },
+                { status: 'Waiting List', coach: '-', berth: 'WL 15', passenger: '1', message: '🔴 PNR Status: WAITING LIST | WL No: 15 | Chance of confirmation: Moderate' },
+                { status: 'Confirmed', coach: 'B2', berth: '45', passenger: '2', message: '✅ PNR Status: CONFIRMED | Coach: B2 | Berth: 45 | Passenger: 2' },
+                { status: 'Confirmed', coach: 'A3', berth: '08', passenger: '1', message: '✅ PNR Status: CONFIRMED | Coach: A3 | Berth: 08 | Passenger: 1' }
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * statuses.length);
+            const result = statuses[randomIndex];
+            
+            showToast(`${result.message}`, 4000);
+        }
+
+        // Event Listeners
+        checkBtn.addEventListener('click', checkPNRStatus);
+        
+        pnrInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPNRStatus();
+            }
+        });
+        
+        // Restrict input to numbers only
+        pnrInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+        });
+
+        // Navigation items interaction
+        const navLinks = document.querySelectorAll('.nav-links a, .right-links a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const text = this.innerText;
+                showToast(`🚆 Navigating to ${text} section`);
+            });
+        });
+
+        // Feature cards interaction
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.feature-title').innerText;
+                showToast(`✨ ${title} - Coming soon!`);
+            });
+        });
+
+        // Benefit items interaction
+        const benefitItems = document.querySelectorAll('.benefit-item');
+        benefitItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const title = this.querySelector('.benefit-title').innerText;
+                showToast(`💡 Learn more about: ${title}`);
+            });
+        });
+    </script>
+</body>
+</html>
